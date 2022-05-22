@@ -1,4 +1,5 @@
 import random
+import time
 #original = input('input a number: ')
 #original = int(original)
 #n = original
@@ -109,14 +110,22 @@ def frontspace(number):
 ##print (frontspace(1234))
 ##print ("should be 234")
 
-#adds a digit onto the beginning of the number
-def frontadd(number, digit):
+#adds a digit onto the end of the number
+def backadd(number, digit):
     digits_list = num_listing(number)
     digits_list.append(digit)
     n = list_to_num(digits_list)
     return n
 ##print(frontadd(1234, 3))
 ##print('should be 12343')
+
+def frontadd(number, digit):
+    digits_list = num_listing(number)
+    result = [digit]
+    for k in digits_list:
+        result.append(k)
+    return list_to_num(result)
+# print(frontadd(1234,3))
 
 #converts all of the digits(converting) that are a certain number to another number(replacing)
 def convert(number, converting, replacing):
@@ -157,49 +166,159 @@ def replace(number, converting, replacement):
 #print(replace(1234, 12, 6))
 #print('should be 634')
 
-def main():
+def options():
+    print("Here are the moves you can take:")
+    print("Rearrange the digits smallest to largest - 1")
+    print("Rearrange the digits largest to smallest - 2")
+    print("Add a number between 1 and 9 inclusive - 3")
+    print("Subtract a number between 1 and 9 inclusive - 4")
+    print("Divide by any positive integer. Returns the quotient - 5")
+    print("Multiply by any positive integer - 6")
+    print("Deletes the last digit of the number - 7")
+    print("Deletes the first digit of the number - 8")
+    print("Add a digit onto the end of the number - 9")
+    print("Add a digit onto the front of the number - 10")
+    print("Convert all occurrances of a digit to another digit - 11")
+    print("Stop the current game - \"stop\"")
+
+
+def turn(num, n):
+    if (n==1):
+        return small_to_big(num)
+    if (n == 2):
+        return big_to_small(num)
+    if (n == 3):
+        k = input("Enter a number between 1 and 9: ")
+        try:
+            k = int(k.strip())
+        except:
+            print("Please enter an integer")
+        if (k <= 0 or k > 9):
+            print("Please enter a valid number")
+            return num
+        return (num + k)
+    if (n == 4):
+        k = input("Enter a number between 1 and 9: ")
+        try:
+            k = int(k.strip())
+        except:
+            print("Please enter an integer")
+        if (k <= 0 or k > 9):
+            print("Please enter a valid number")
+            return num
+        return (num - k)
+    if (n == 5):
+        k = input("Enter a positive integer: ")
+        try:
+            k = int(k.strip())
+        except:
+            print("Please enter an integer")
+        if (k <= 0):
+            print("Please enter a valid integer")
+            return num
+        return (num/k)
+    if (n == 6):
+        k = input("Enter a positive integer: ")
+        try:
+            k = int(k.strip())
+        except:
+            print("Please enter an integer")
+        if (k <= 0):
+            print("Please enter a valid integer")
+            return num
+        return (num*k)
+    if (n == 7):
+        return backspace(num)
+    if (n == 8):
+        return frontspace(num)
+    if (n == 9):
+        k = input("Enter a positive integer: ")
+        try:
+            k = int(k.strip())
+        except:
+            print("Please enter an integer")
+        if (k <= 0 or k > 9):
+            print("Please enter a valid digit")
+            return num
+        return backadd(num, k)
+    if (n == 10):
+        k = input("Enter a positive integer: ")
+        try:
+            k = int(k.strip())
+        except:
+            print("Please enter an integer")
+        if (k <= 0 or k > 9):
+            print("Please enter a valid digit")
+            return num
+        return frontadd(num, k)
+    if (n == 11):
+        k = input("Enter the digit to replace: ")
+        j = input("Enter the replacement digit: ")
+        try:
+            k = int(k.strip())
+            j = int(j.strip())
+        except:
+            print("Please enter an integer")
+        if (k <= 0 or k > 9 or j <= 0 or j > 9):
+            print("Please enter a valid digit")
+            return num
+        return convert(num, k, j)
+    else:
+        print("Invalid input, please try again")
+        return num
+        
+
+
+def game():
     print('goal: ' + str(num_to_get))
-    print('starting number: ' + str(starting_number))
+    print('starting number: ' + str(starting_number) + '\n')
     current_number_state = starting_number
     global num_turns
     num_turns = 0
     while (current_number_state != num_to_get):
-        step_to_take = input("enter a value: ")
+        options()
+        step_to_take = input("Enter a value: ")
+        if (step_to_take.strip() == 'stop'):
+            return
         try:
-            step_to_take = int(step_to_take)
+            step_to_take = int(step_to_take.strip())
         except:
             print('please enter a valid number')
-        if (step_to_take== 1):
-            current_number_state = small_to_big(current_number_state)
-        elif (step_to_take == 2):
-            current_number_state = num_to_get
-        print(current_number_state)
-        print(starting_number)
+        print()
+        current_number_state = turn(current_number_state, step_to_take)
+        print("your current number: " + str(current_number_state) + ", your goal: " + str(num_to_get))
+        print()
         num_turns += 1
-        print('number of turns:' + str(num_turns))
-    print('finished')
+        time.sleep(1.5)
+        print('number of turns: ' + str(num_turns))
+    print("Congratulations!")
     global highscore
     if (highscore == 0 or num_turns < highscore):
-        print("New high score!")
+        print("You got a new high score of " + str(num_turns) + "!!")
         highscore = num_turns
     
 
-if __name__ == "__main__":
-    main()
-    print('here')
-    print(starting_number)
-    print(num_to_get)
-    print(num_turns)
+def main():
+    print("Welcome to the Calculator Game! You are given two numbers: your goal and your starting number.")
+    print("The objective of the game is to arrive from the starting number to the goal in the fewest turns.")
+    print("Good luck!")
+    game()
+    # print('here')
+    # print(starting_number)
+    # print(num_to_get)
+    # print(num_turns)
     while (True):
-        retry = input("restart - 1 \n quit - q")
+        print("restart - 1 \nTo quit, enter any other number \n")
+        retry = input("Enter a number")
         if (retry == "1"):
-            main()
-            print(starting_number)
-            print(num_to_get)
-            print(num_turns)
-            print(highscore)
+            print('\n')
+            game()
+            # print(starting_number)
+            # print(num_to_get)
+            # print(num_turns)
+            # print(highscore)
         else:
             break
-    print('finished')
+    # print('finished')
         
 

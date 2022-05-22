@@ -1,0 +1,3 @@
+import calculatorgame
+
+calculatorgame.main()
