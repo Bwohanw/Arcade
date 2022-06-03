@@ -7,11 +7,11 @@ import time
 
 highscore = 0
 num_turns = 0
-starting_number = random.randint(0,700)
-num_to_get = random.randint(0,700)
+starting_number = random.randint(0,10000)
+num_to_get = random.randint(0,10000)
 while (starting_number == num_to_get):
-    starting_number = random.randint(0, 700)
-
+    starting_number = random.randint(0, 10000)
+allowed = 3
 #turns number into a list of its digits
 def num_listing(number):
     exponentiate = 10**(len(str(number)) - 1)
@@ -172,7 +172,7 @@ def options():
     print("Rearrange the digits largest to smallest - 2")
     print("Add a number between 1 and 9 inclusive - 3")
     print("Subtract a number between 1 and 9 inclusive - 4")
-    print("Divide by any positive integer. Returns the quotient - 5")
+    print("Divide by one of the numbers factors - 5")
     print("Multiply by any positive integer - 6")
     print("Deletes the last digit of the number - 7")
     print("Deletes the first digit of the number - 8")
@@ -183,6 +183,8 @@ def options():
 
 
 def turn(num, n):
+    global allowed
+    global num_turns
     if (n==1):
         return small_to_big(num)
     if (n == 2):
@@ -213,10 +215,10 @@ def turn(num, n):
             k = int(k.strip())
         except:
             print("Please enter an integer")
-        if (k <= 0):
+        if (k <= 0 or num % k != 0):
             print("Please enter a valid integer")
             return num
-        return (num/k)
+        return int(num/k)
     if (n == 6):
         k = input("Enter a positive integer: ")
         try:
@@ -228,8 +230,20 @@ def turn(num, n):
             return num
         return (num*k)
     if (n == 7):
+        if allowed <= 0:
+            num_turns += 1
+            print("Penalty: extra move added")
+        else:
+            allowed -= 1
+            print("You have " + str(allowed) + " more uses of 7 and 8 before incurring penalties")
         return backspace(num)
     if (n == 8):
+        if allowed <= 0:
+            num_turns += 1
+            print("Penalty: extra move added")
+        else:
+            allowed -= 1
+            print("You have " + str(allowed) + " more uses of 7 and 8 before incurring penalties")
         return frontspace(num)
     if (n == 9):
         k = input("Enter a positive integer: ")
@@ -301,6 +315,7 @@ def game():
 def main():
     print("Welcome to the Calculator Game! You are given two numbers: your goal and your starting number.")
     print("The objective of the game is to arrive from the starting number to the goal in the fewest turns.")
+    print("Please keep in mind that commands 7 and 8 can only be used 3 times total before incurring score penalties")
     print("Good luck!")
     game()
     # print('here')
@@ -308,8 +323,8 @@ def main():
     # print(num_to_get)
     # print(num_turns)
     while (True):
-        print("restart - 1 \nTo quit, enter any other number \n")
-        retry = input("Enter a number")
+        print("restart - 1 \nnew game - 2\nto quit, enter any other argument\n")
+        retry = input("Enter a number ").strip()
         if (retry == "1"):
             print('\n')
             game()
@@ -317,8 +332,18 @@ def main():
             # print(num_to_get)
             # print(num_turns)
             # print(highscore)
+        elif retry == "2":
+            global starting_number
+            global num_to_get
+            global highscore
+            highscore = 0
+            starting_number = random.randint(0,10000)
+            num_to_get = random.randint(0,10000)
+            while (starting_number == num_to_get):
+                starting_number = random.randint(0, 10000)
+            game()
         else:
             break
-    # print('finished')
+    print('Thanks for playing!')
         
 
