@@ -3,4 +3,4 @@ import hangman
 import ticTacToe
 import wordle
 import numberguesser
-calculatorgame.main()
+wordle.main()
